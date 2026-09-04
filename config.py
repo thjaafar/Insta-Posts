@@ -12,18 +12,22 @@ load_dotenv()
 # --- LLM (content generation) ---
 # Get a free key with no card/ID required at https://aistudio.google.com/
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
-LLM_MODEL = os.getenv("LLM_MODEL", "gemini-2.5-flash")
+LLM_MODEL = os.getenv("LLM_MODEL", "gemini-flash-latest")
 
 # --- Image hosting (Instagram requires a public image URL) ---
 # imgbb is free and simple: https://api.imgbb.com/ (get a free key)
 IMGBB_API_KEY = os.getenv("IMGBB_API_KEY", "")
 
-# --- Instagram Graph API ---
-# Requires: Instagram Professional account linked to a Facebook Page,
-# a Meta developer app, and a long-lived Page access token.
+# --- Instagram API (using "Instagram API with Instagram Login") ---
+# Get these from your Meta app dashboard's Instagram > API setup page:
+# the "Generate token" button gives you IG_ACCESS_TOKEN, and the account ID
+# shown next to your Instagram account (e.g. 178414...) is IG_BUSINESS_ACCOUNT_ID.
 IG_ACCESS_TOKEN = os.getenv("IG_ACCESS_TOKEN", "")
 IG_BUSINESS_ACCOUNT_ID = os.getenv("IG_BUSINESS_ACCOUNT_ID", "")
 GRAPH_API_VERSION = os.getenv("GRAPH_API_VERSION", "v21.0")
+# graph.instagram.com for Instagram Login apps (no Facebook Page needed);
+# graph.facebook.com for the older Facebook-Login-linked-Page flow.
+GRAPH_HOST = os.getenv("GRAPH_HOST", "graph.instagram.com")
 
 # --- Scheduling ---
 # 24hr local time, e.g. "09:00"

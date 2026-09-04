@@ -1,11 +1,15 @@
 """
 Publishes a single image post to Instagram via the Graph API.
 
-Requirements (one-time setup, see README.md):
+Requirements (Instagram API with Instagram Login — the simpler flow,
+no Facebook Page required):
   1. Instagram account converted to a Professional (Business/Creator) account.
-  2. That IG account linked to a Facebook Page.
-  3. A Meta developer app with instagram_content_publish permission.
-  4. A long-lived Page access token + your IG Business Account ID.
+  2. A Meta developer app with the Instagram API product added, and your
+     Instagram account added as a tester/account under it.
+  3. The "Generate token" button on the app's Instagram setup page gives
+     you the Instagram User access token (IG_ACCESS_TOKEN).
+  4. The numeric ID shown next to your Instagram account on that same
+     page is your IG_BUSINESS_ACCOUNT_ID.
 
 Flow: create a media container from the image URL -> publish that container.
 """
@@ -15,7 +19,7 @@ import requests
 
 import config
 
-GRAPH_URL = f"https://graph.facebook.com/{config.GRAPH_API_VERSION}"
+GRAPH_URL = f"https://{config.GRAPH_HOST}/{config.GRAPH_API_VERSION}"
 
 
 def _raise_with_body(resp, step_name):

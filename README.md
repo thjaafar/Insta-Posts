@@ -31,26 +31,31 @@ Fill in `.env` with the keys below.
 - Instagram's API requires a public image URL, not a file upload — this
   is what makes that possible without you running your own server.
 
-**Instagram Graph API (the fiddly one)**
+**Instagram API (the fiddly one — but simpler than it used to be)**
+
+You're using **"Instagram API with Instagram Login"** — Meta's newer, simpler
+setup that doesn't require linking a Facebook Page.
+
 1. Your Instagram account must be a **Professional account** (Business or
    Creator) — Settings → Account type in the Instagram app.
-2. Link it to a **Facebook Page** (Instagram settings → Linked accounts).
-3. Go to developers.facebook.com → create an app → add the
-   **Instagram Graph API** product.
-4. Use the Graph API Explorer (or the app's token tool) to generate a
-   **Page access token** with these permissions: `instagram_basic`,
-   `instagram_content_publish`, `pages_read_engagement`.
-5. Exchange it for a **long-lived token** (60 days) using the
-   `oauth/access_token` endpoint with `grant_type=fb_exchange_token` —
-   Meta's docs walk through this exact call.
-6. Find your `IG_BUSINESS_ACCOUNT_ID` by calling:
-   `GET /me/accounts` → get your Page ID → then
-   `GET /{page-id}?fields=instagram_business_account`.
-7. Put the token and account ID into `.env`.
+2. Go to developers.facebook.com → create an app (or use your existing one)
+   → add the **Instagram** product.
+3. On the app's Instagram setup page, under "Generate access tokens", click
+   **Add account** and add your Instagram account (you may need to assign
+   it the Instagram Tester role under the Roles tab first, and accept the
+   invite from the Instagram app itself).
+4. Click **"Generate token"** next to your account. Copy that value —
+   this is your `IG_ACCESS_TOKEN`.
+5. The numeric ID shown right under your Instagram username on that same
+   page (e.g. `178414...`) is your `IG_BUSINESS_ACCOUNT_ID`.
+6. Leave `GRAPH_HOST` as the default (`graph.instagram.com`) — this is
+   what this login flow uses; the old Facebook-linked flow used
+   `graph.facebook.com` instead, if you ever switch approaches.
 
-Long-lived tokens expire every ~60 days — you'll need to refresh
-`IG_ACCESS_TOKEN` periodically, or build a refresh step if you want this
-to run unattended for months.
+This token type doesn't need the long-lived-token exchange step the
+Facebook-linked flow requires — the token from "Generate token" is
+already usable directly, though it will still expire eventually and need
+regenerating.
 
 ## 3. Test it (no posting yet)
 
