@@ -18,6 +18,15 @@ import config
 GRAPH_URL = f"https://graph.facebook.com/{config.GRAPH_API_VERSION}"
 
 
+def _raise_with_body(resp, step_name):
+    if not resp.ok:
+        try:
+            detail = resp.json()
+        except ValueError:
+            detail = resp.text
+        raise RuntimeError(f"Instagram API error during {step_name}: {detail}")
+
+
 def post_image(image_url: str, caption: str) -> str:
     if not config.IG_ACCESS_TOKEN or not config.IG_BUSINESS_ACCOUNT_ID:
         raise RuntimeError(
@@ -35,7 +44,7 @@ def post_image(image_url: str, caption: str) -> str:
         },
         timeout=30,
     )
-    create_resp.raise_for_status()
+    _raise_with_body(create_resp, "create media container")
     creation_id = create_resp.json()["id"]
 
     # Step 2: poll container status until it's ready to publish
@@ -46,6 +55,7 @@ def post_image(image_url: str, caption: str) -> str:
             params={"fields": "status_code", "access_token": config.IG_ACCESS_TOKEN},
             timeout=15,
         )
+        _raise_with_body(status_resp, "check container status")
         status = status_resp.json().get("status_code", "IN_PROGRESS")
         if status == "FINISHED":
             break
@@ -60,5 +70,5 @@ def post_image(image_url: str, caption: str) -> str:
         data={"creation_id": creation_id, "access_token": config.IG_ACCESS_TOKEN},
         timeout=30,
     )
-    publish_resp.raise_for_status()
+    _raise_with_body(publish_resp, "publish media")
     return publish_resp.json()["id"]
