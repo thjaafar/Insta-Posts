@@ -18,8 +18,11 @@ Fill in `.env` with the keys below.
 
 ## 2. Get your API keys
 
-**Anthropic (content generation)**
-- console.anthropic.com → create an API key → `ANTHROPIC_API_KEY`
+**Google Gemini (content generation)**
+- aistudio.google.com → sign in with a Google account → create an API key
+  → `GEMINI_API_KEY`
+- No credit card or ID verification required, and the free tier
+  (Gemini Flash) comfortably covers one post a day.
 - If you skip this, the agent still runs using a built-in fallback quote
   bank, just with less variety.
 

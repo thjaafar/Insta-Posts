@@ -10,8 +10,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # --- LLM (content generation) ---
-ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
-LLM_MODEL = os.getenv("LLM_MODEL", "claude-sonnet-4-5")
+# Get a free key with no card/ID required at https://aistudio.google.com/
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+LLM_MODEL = os.getenv("LLM_MODEL", "gemini-2.5-flash")
 
 # --- Image hosting (Instagram requires a public image URL) ---
 # imgbb is free and simple: https://api.imgbb.com/ (get a free key)

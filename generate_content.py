@@ -36,8 +36,8 @@ def _pick_topic(history):
     return random.choice(candidates)
 
 
-def _call_claude(topic, past_quotes):
-    if not config.ANTHROPIC_API_KEY:
+def _call_gemini(topic, past_quotes):
+    if not config.GEMINI_API_KEY:
         return None
 
     avoid = "\n".join(f"- {q}" for q in past_quotes[-15:]) or "(none yet)"
@@ -54,22 +54,24 @@ Return ONLY valid JSON, no markdown fences, in this exact shape:
   "hashtags": ["#tag1", "#tag2", "... 8-12 relevant hashtags mixing broad and niche"]
 }}"""
 
+    url = (
+        f"https://generativelanguage.googleapis.com/v1beta/models/"
+        f"{config.LLM_MODEL}:generateContent?key={config.GEMINI_API_KEY}"
+    )
     resp = requests.post(
-        "https://api.anthropic.com/v1/messages",
-        headers={
-            "x-api-key": config.ANTHROPIC_API_KEY,
-            "anthropic-version": "2023-06-01",
-            "content-type": "application/json",
-        },
+        url,
+        headers={"content-type": "application/json"},
         json={
-            "model": config.LLM_MODEL,
-            "max_tokens": 500,
-            "messages": [{"role": "user", "content": prompt}],
+            "contents": [{"parts": [{"text": prompt}]}],
+            "generationConfig": {
+                "temperature": 0.9,
+                "responseMimeType": "application/json",
+            },
         },
         timeout=30,
     )
     resp.raise_for_status()
-    text = resp.json()["content"][0]["text"].strip()
+    text = resp.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
     text = text.removeprefix("```json").removeprefix("```").removesuffix("```").strip()
     return json.loads(text)
 
@@ -96,9 +98,9 @@ def generate():
 
     data = None
     try:
-        data = _call_claude(topic, history["quotes"])
+        data = _call_gemini(topic, history["quotes"])
     except Exception as e:
-        print(f"[generate_content] LLM call failed, using fallback: {e}")
+        print(f"[generate_content] Gemini call failed, using fallback: {e}")
 
     if not data:
         quote = _FALLBACK_BANK.get(topic, "Small daily discipline beats big rare effort.")
